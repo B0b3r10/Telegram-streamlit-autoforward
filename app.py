@@ -12,44 +12,28 @@ st.set_page_config(page_title="Telegram · Streamlit", layout="centered", page_i
 st_autorefresh(interval=30 * 1000, key="data_refresher")
 
 def display_media(post):
-    project_root = Path(__file__).parent.resolve()
-    photo_paths = post.photo_paths or []
-    video_paths = post.video_paths or []
-    all_media = photo_paths + video_paths
+    photo_urls = post.photo_paths or []
+    video_urls = post.video_paths or []
+    all_media_urls = photo_urls + video_urls
 
-    if not all_media:
+    if not all_media_urls:
         return
-
-    if len(all_media) == 1:
-        media_path_str = all_media[0]
-        if not isinstance(media_path_str, str) or not media_path_str.strip(): return
-        
-        media_path = project_root / media_path_str
-        if media_path.exists():
-            try:
-                if str(media_path).lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
-                    st.image(str(media_path))
-                elif str(media_path).lower().endswith('.mp4'):
-                    st.video(str(media_path))
-            except Exception as e:
-                st.warning(f"Cant display media: {media_path_str}. ERROR: {e}")
-    
-    elif len(all_media) > 1:
-        tab_titles = [f"File {i+1}" for i in range(len(all_media))]
+    if len(all_media_urls) == 1:
+        url = all_media_urls[0]
+        if url.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
+            st.image(url)
+        elif url.lower().endswith('.mp4'):
+            st.video(url)
+    elif len(all_media_urls) > 1:
+        tab_titles = [f"Media {i+1}" for i in range(len(all_media_urls))]
         tabs = st.tabs(tab_titles)
         for i, tab in enumerate(tabs):
             with tab:
-                media_path_str = all_media[i]
-                if not isinstance(media_path_str, str) or not media_path_str.strip(): continue
-                media_path = project_root / media_path_str
-                if media_path.exists():
-                    try:
-                        if str(media_path).lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
-                            st.image(str(media_path))
-                        elif str(media_path).lower().endswith('.mp4'):
-                            st.video(str(media_path))
-                    except Exception as e:
-                        st.warning(f"Cant display media: {media_path_str}. ERROR: {e}")
+                url = all_media_urls[i]
+                if url.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
+                    st.image(url)
+                elif url.lower().endswith('.mp4'):
+                    st.video(url)
 
 
 def display_pagination(total_posts, current_page):
